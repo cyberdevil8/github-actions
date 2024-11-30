@@ -33,11 +33,13 @@ jobs:
           zip -r artifact/artifact.zip src/*
 
       # Step 5: Configure AWS credentials
+
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v3
         with:
-          role-to-assume: arn:aws:iam::681817722327:role/<IAM_ROLE_NAME>
-          aws-region: us-east-1
+            role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID }}:role/${{ secrets.IAM_ROLE_NAME }}
+            aws-region: ap-south-1
+        
 
       # Step 6: Set up Terraform
       - name: Set up Terraform
