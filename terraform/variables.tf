@@ -1,17 +1,21 @@
-variable "aws_region" {
-  description = "The AWS region to deploy resources"
+variable "aws_account_id" {
+  description = "AWS Account ID"
   type        = string
-  default     = "ap-south-1"  # Updated region
 }
 
 variable "lambda_function_name" {
-  description = "The name of the Lambda function"
+  description = "Name of the Lambda function"
   type        = string
-  default     = "hello-world-lambda"
+  default     = "hello-world-function"
 }
 
-variable "zip_file" {
-  description = "Path to the ZIP file to upload"
+variable "aws_region" {
+  description = "AWS Region"
   type        = string
-  default     = "artifact/artifact.zip"
+  default     = "ap-south-1"
+}
+
+variable "s3_bucket_name" {
+  description = "Name of the S3 bucket to upload the Lambda ZIP file"
+  type        = string
 }
