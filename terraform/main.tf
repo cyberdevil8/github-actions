@@ -1,14 +1,16 @@
-resource "aws_s3_bucket" "lambda_artifact_bucket" {
+resource "aws_s3_object" "lambda_zip" {
   bucket = var.s3_bucket_name
-  acl    = "private"
+  key    = "lambda/artifact.zip"
+  source = "${path.module}/../artifact/artifact.zip"
+  etag   = filemd5("${path.module}/../artifact/artifact.zip")
 }
 
 resource "aws_lambda_function" "hello_world" {
-  function_name    = var.lambda_function_name
-  role             = aws_iam_role.lambda_execution_role.arn
-  handler          = "lambda_function.lambda_handler"
+  function_name    = "HelloWorldLambda"
   runtime          = "python3.9"
-  s3_bucket        = aws_s3_bucket.lambda_artifact_bucket.bucket
-  s3_key           = "artifact.zip"
-  source_code_hash = filebase64sha256("artifact.zip")
+  handler          = "app.lambda_handler"
+  role             = aws_iam_role.lambda_execution_role.arn
+  s3_bucket        = var.s3_bucket_name
+  s3_key           = aws_s3_object.lambda_zip.key
+  source_code_hash = filebase64sha256("${path.module}/../artifact/artifact.zip")
 }
