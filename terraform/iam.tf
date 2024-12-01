@@ -1,3 +1,4 @@
+# IAM Role Creation
 resource "aws_iam_role" "lambda_execution_role" {
   name = "lambda_execution_role"
 
@@ -5,24 +6,22 @@ resource "aws_iam_role" "lambda_execution_role" {
     Version = "2012-10-17"
     Statement = [
       {
+        Action = "sts:AssumeRole"
         Effect = "Allow"
         Principal = {
-          Federated = "arn:aws:iam::${var.aws_account_id}:oidc-provider/token.actions.githubusercontent.com"
-        }
-        Action    = "sts:AssumeRoleWithWebIdentity"
-        Condition = {
-          StringLike = {
-            "token.actions.githubusercontent.com:sub" : "repo:cyberdevil8/github-actions:ref:refs/heads/main"
-          }
-          StringEquals = {
-            "token.actions.githubusercontent.com:aud" : "sts.amazonaws.com"
-          }
+          Service = "lambda.amazonaws.com"
         }
       }
     ]
   })
+
+  lifecycle {
+    create_before_destroy = true
+    ignore_changes        = [name]
+  }
 }
 
+# IAM Policy Creation
 resource "aws_iam_policy" "lambda_execution_policy" {
   name = "lambda_execution_policy"
 
@@ -30,20 +29,30 @@ resource "aws_iam_policy" "lambda_execution_policy" {
     Version = "2012-10-17"
     Statement = [
       {
+        Action = [
+          "logs:CreateLogGroup",
+          "logs:CreateLogStream",
+          "logs:PutLogEvents"
+        ]
         Effect   = "Allow"
-        Action   = ["logs:CreateLogGroup", "logs:CreateLogStream", "logs:PutLogEvents"]
-        Resource = "arn:aws:logs:${var.aws_region}:${var.aws_account_id}:*"
+        Resource = "arn:aws:logs:*:*:*"
       },
       {
+        Action = [
+          "s3:GetObject",
+          "s3:PutObject",
+          "s3:ListBucket"
+        ]
         Effect   = "Allow"
-        Action   = "lambda:*"
-        Resource = "*"
+        Resource = [
+          "arn:aws:s3:::${var.s3_bucket_name}",
+          "arn:aws:s3:::${var.s3_bucket_name}/*"
+        ]
       }
     ]
   })
-}
 
-resource "aws_iam_role_policy_attachment" "attach_lambda_policy" {
-  role       = aws_iam_role.lambda_execution_role.name
-  policy_arn = aws_iam_policy.lambda_execution_policy.arn
+  lifecycle {
+    prevent_destroy = true
+  }
 }
