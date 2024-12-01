@@ -16,12 +16,11 @@ resource "aws_s3_object" "lambda_zip" {
   acl    = "private"
 }
 
-# Lambda Function Creation
 resource "aws_lambda_function" "hello_world" {
   function_name = "hello_world_lambda"
 
-  s3_bucket = aws_s3_bucket.lambda_bucket.bucket
-  s3_key    = aws_s3_object.lambda_zip.key
+  s3_bucket = var.s3_bucket_name      # The S3 bucket where the Lambda zip is stored
+  s3_key    = "lambda_function.zip"   # The path to the uploaded Lambda zip in S3
 
   runtime = "python3.8"
   role    = aws_iam_role.lambda_execution_role.arn  # Reference the IAM Role

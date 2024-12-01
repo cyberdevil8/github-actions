@@ -19,3 +19,10 @@ variable "s3_bucket_name" {
   description = "Name of the S3 bucket to upload the Lambda ZIP file"
   type        = string
 }
+
+
+# Define the path to the Lambda zip file
+variable "lambda_zip_path" {
+  description = "The path to the Lambda deployment ZIP file"
+  type        = string
+}
