@@ -1,6 +1,5 @@
-# IAM Role Creation (Avoid conflict if the role already exists)
 resource "aws_iam_role" "lambda_execution_role" {
-  name = "lambda_execution_role"
+  name = "lambda_execution_role_${terraform.workspace}"
 
   assume_role_policy = jsonencode({
     Version = "2012-10-17"
@@ -16,15 +15,12 @@ resource "aws_iam_role" "lambda_execution_role" {
   })
 
   lifecycle {
-    ignore_changes = [
-      name  # Ignore the name so Terraform doesn't try to recreate it
-    ]
+    prevent_destroy = true
   }
 }
 
-# IAM Policy Creation (Avoid conflict if the policy already exists)
 resource "aws_iam_policy" "lambda_execution_policy" {
-  name = "lambda_execution_policy"
+  name = "lambda_execution_policy_${terraform.workspace}"
 
   policy = jsonencode({
     Version = "2012-10-17"
@@ -54,8 +50,11 @@ resource "aws_iam_policy" "lambda_execution_policy" {
   })
 
   lifecycle {
-    ignore_changes = [
-      name  # Ignore the name so Terraform doesn't try to recreate it
-    ]
+    prevent_destroy = true
   }
+}
+
+resource "aws_iam_role_policy_attachment" "lambda_execution_policy_attach" {
+  role       = aws_iam_role.lambda_execution_role.name
+  policy_arn = aws_iam_policy.lambda_execution_policy.arn
 }
