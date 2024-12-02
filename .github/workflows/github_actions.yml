@@ -46,7 +46,11 @@ jobs:
       # Step 6: Upload ZIP to S3
       - name: Upload ZIP to S3
         run: |
+          if [ -z "${{ secrets.S3_BUCKET_NAME }}" ]; then
+            echo "Error: S3_BUCKET_NAME is not set in secrets" && exit 1
+          fi
           aws s3 cp artifact/lambda_function.zip s3://${{ secrets.S3_BUCKET_NAME }}/lambda_function.zip
+
 
       # Step 7: Set up Terraform
       - name: Set up Terraform
