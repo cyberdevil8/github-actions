@@ -1,10 +1,3 @@
-resource "aws_s3_bucket" "lambda_bucket" {
-  bucket = var.s3_bucket_name
-  acl    = "private"
-
-  force_destroy = true
-}
-
 # Reference existing IAM role
 data "aws_iam_role" "existing_lambda_role" {
   name = "hello_world_github_actions"
