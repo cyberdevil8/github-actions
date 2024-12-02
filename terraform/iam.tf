@@ -1,3 +1,12 @@
+resource "random_id" "role_suffix" {
+  byte_length = 4
+}
+
+resource "random_id" "policy_suffix" {
+  byte_length = 4
+}
+
+
 resource "aws_iam_role" "lambda_execution_role" {
   name = "lambda_execution_role-${random_id.role_suffix.hex}"
 
