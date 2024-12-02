@@ -20,4 +20,8 @@ resource "aws_lambda_function" "hello_world" {
       BUCKET_NAME = var.s3_bucket_name
     }
   }
+
+   lifecycle {
+    create_before_destroy = false
+  }
 }
