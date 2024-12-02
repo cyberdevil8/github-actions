@@ -1,5 +1,5 @@
 resource "aws_iam_role" "lambda_execution_role" {
-  name = "lambda_execution_role_${terraform.workspace}"
+  name = "lambda_execution_role-${random_id.role_suffix.hex}"
 
   assume_role_policy = jsonencode({
     Version = "2012-10-17"
@@ -20,7 +20,7 @@ resource "aws_iam_role" "lambda_execution_role" {
 }
 
 resource "aws_iam_policy" "lambda_execution_policy" {
-  name = "lambda_execution_policy_${terraform.workspace}"
+  name = "lambda_execution_policy-${random_id.policy_suffix.hex}"
 
   policy = jsonencode({
     Version = "2012-10-17"
