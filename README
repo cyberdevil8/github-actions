@@ -1,1 +1,3 @@
 Simple CI CD Pipeline for service deployment
+- github actions
+- terraform scripts
